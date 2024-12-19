@@ -1,5 +1,6 @@
 let model;
 
+// โหลดโมเดล
 async function loadModel() {
   const modelPath = './teeth_modelnew.tflite'; // Path ของโมเดล
   try {
@@ -16,10 +17,10 @@ window.onload = () => {
   loadModel();
 };
 
-// ฟังก์ชันที่ใช้ในการแสดงผลการพยากรณ์
+// ฟังก์ชันสำหรับพยากรณ์ภาพ
 async function predictImage() {
   const fileInput = document.getElementById('image-input');
-  const file = fileInput.files[0];
+  const file = fileInput.files[0]; // รับไฟล์จากการเลือก
 
   if (!file) {
     alert("No file chosen");
@@ -30,16 +31,16 @@ async function predictImage() {
   document.getElementById('prediction-result').textContent = 'Processing...';
 
   try {
-    const image = await loadImage(file); // โหลดภาพ
-    const result = await model.predict(image); // พยากรณ์
-    document.getElementById('prediction-result').textContent = result;
+    const image = await loadImage(file); // โหลดภาพจากไฟล์
+    const result = await model.predict(image); // ใช้โมเดลพยากรณ์
+    document.getElementById('prediction-result').textContent = 'Prediction: ' + result; // แสดงผลลัพธ์
   } catch (error) {
     console.error('Prediction error:', error);
     document.getElementById('prediction-result').textContent = 'Error during prediction';
   }
 }
 
-// ฟังก์ชันสำหรับโหลดภาพจากไฟล์ที่เลือก
+// ฟังก์ชันสำหรับโหลดภาพจากไฟล์
 function loadImage(file) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -56,4 +57,5 @@ function loadImage(file) {
   });
 }
 
-document.getElementById('image-input').addEventListener('change', predictImage);
+// เมื่อกดปุ่ม "วิเคราะห์"
+document.getElementById('analyze-btn').addEventListener('click', predictImage);
