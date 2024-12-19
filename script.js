@@ -7,9 +7,11 @@ async function loadModel() {
         // Assuming TensorFlow.js can load .tflite models
         const model = await tf.loadGraphModel(modelPath, { fromTFHub: false });
         console.log("Model loaded successfully");
+        alert("Model loaded successfully!");  // Show a pop-up when model is loaded successfully
         return model;
     } catch (error) {
         console.error("Error loading the model: ", error);
+        alert("Error loading model! Please check your model path and try again.");  // Show error pop-up
         return null;
     }
 }
