@@ -1,27 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teeth Model Analysis</title>
-  <link rel="stylesheet" href="style.css">
-
-  <!-- โหลดไลบรารี TensorFlow.js -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teeth Model Analysis</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Teeth Model Analysis</h1>
-  
-  <!-- ปุ่มเลือกไฟล์ -->
-  <input type="file" id="image-input" accept="image/*">
-  
-  <!-- ปุ่มวิเคราะห์ -->
-  <button id="analyze-btn">วิเคราะห์</button>
-  
-  <!-- ผลลัพธ์ -->
-  <div id="prediction-result">No file chosen</div>
-  
-  <script src="script.js"></script>
+    <h1>Teeth Model Analysis</h1>
+    <input type="file" id="inputImage" accept="image/*">
+    <button id="analyzeBtn" disabled>Analyze</button>
+    <div id="prediction-result"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="script.js"></script>
 </body>
 </html>
