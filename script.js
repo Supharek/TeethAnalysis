@@ -1,91 +1,61 @@
-const modelPath = 'teeth_modelnew.tflite';  // Path to the model file
+let model;
 
-// Load the model
+// ฟังก์ชันโหลดโมเดล
 async function loadModel() {
-    console.log("Loading model...");
+    const modelPath = '/teeth_modelnew.tflite';
+    const modelStatus = document.getElementById('model-status');
+
     try {
-        // Assuming TensorFlow.js can load .tflite models
-        const model = await tf.loadGraphModel(modelPath, { fromTFHub: false });
-        console.log("Model loaded successfully");
-        alert("Model loaded successfully!");  // Show a pop-up when model is loaded successfully
-        return model;
+        // แสดงข้อความขณะโหลด
+        modelStatus.innerHTML = '<p>Loading model...</p>';
+
+        // โหลดโมเดล
+        model = await tf.loadGraphModel(modelPath);
+
+        // ถ้าโหลดสำเร็จ
+        modelStatus.innerHTML = '<p>Model loaded successfully!</p>';
+        alert('Model loaded successfully!');  // แสดงป๊อปอัพเมื่อโมเดลโหลดสำเร็จ
     } catch (error) {
-        console.error("Error loading the model: ", error);
-        alert("Error loading model! Please check your model path and try again.");  // Show error pop-up
-        return null;
+        // ถ้าเกิดข้อผิดพลาดในการโหลด
+        modelStatus.innerHTML = '<p>Error loading model! Please check your model path and try again.</p>';
+        console.error('Error loading model:', error);
     }
 }
 
-// Preprocess the image to match the input format for the model
-function preprocessImage(image, targetSize = [224, 224]) {
-    const tensor = tf.browser.fromPixels(image)
-        .resizeNearestNeighbor(targetSize)  // Resize image to the required dimensions
-        .toFloat()
-        .expandDims(0);  // Add a batch dimension
-    return tensor;
-}
-
-// Handle image file upload and analysis
-async function analyzeImage() {
-    const fileInput = document.getElementById('imageInput');
-    const resultDiv = document.getElementById('result');
-
-    if (!fileInput.files.length) {
-        resultDiv.innerText = "Please upload an image!";
+// ฟังก์ชันสำหรับการประมวลผลภาพ
+async function analyzeImage(image) {
+    if (!model) {
+        alert('Model is not loaded yet!');
         return;
     }
 
-    const file = fileInput.files[0];
-    const image = new Image();
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const reader = new FileReader();
+    // แปลงภาพที่อัพโหลดเป็น Tensor
+    const tensorImage = tf.browser.fromPixels(image);
 
-    reader.onload = () => {
-        image.src = reader.result;
-    };
-
-    image.onload = async () => {
-        // Set canvas size and draw the uploaded image
-        canvas.width = image.width;
-        canvas.height = image.height;
-        ctx.drawImage(image, 0, 0);
-
-        // Load the model
-        const model = await loadModel();
-
-        // Check if model loaded
-        if (!model) {
-            resultDiv.innerText = "Model failed to load!";
-            return;
-        }
-
-        // Preprocess image and make prediction
-        const inputTensor = preprocessImage(image);
-        const prediction = await model.predict(inputTensor);
-        console.log("Prediction result:", prediction);
-
-        // Get the output prediction result
-        const output = prediction.dataSync();  // For TensorFlow.js
-        resultDiv.innerText = `Prediction Result: ${output}`;
-    };
-
-    reader.readAsDataURL(file);
+    // ประมวลผลภาพ
+    const prediction = await model.predict(tensorImage.expandDims(0));
+    
+    // แสดงผลการทำนาย
+    const predictionResult = document.getElementById('prediction-result');
+    predictionResult.innerHTML = `Prediction result: ${prediction}`;
 }
-    async function loadModel() {
-        console.log("Starting model load...");
-        try {
-            console.log("Fetching model...");
-            const model = await tf.loadGraphModel(modelPath);
-            console.log("Model fetched.");
-            alert("Model loaded successfully!");
-            return model;
-        } catch (error) {
-            console.error("Error during model load:", error);
-            alert("Model loading failed. Check console for errors.");
-            return null;
-        }
-    }
 
-// Event listener for the "Analyze" button
-document.getElementById('analyzeButton').addEventListener('click', analyzeImage);
+// เมื่อโหลดหน้าเว็บ, เริ่มต้นโหลดโมเดล
+window.onload = () => {
+    loadModel();
+
+    // กำหนดให้สามารถอัพโหลดไฟล์ภาพ
+    const imageUpload = document.getElementById('imageUpload');
+    imageUpload.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => analyzeImage(img);
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+};
