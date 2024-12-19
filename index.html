@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตรวจสอบฟันสะอาด</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ตรวจสอบฟันสะอาด</h1>
+        <p>อัพโหลดรูปหรือถ่ายรูปฟันของคุณ แล้วกดปุ่ม "ตรวจสอบฟัน"</p>
+
+        <input type="file" id="upload" accept="image/*" capture="camera" />
+        <img id="preview" src="#" alt="Preview" style="display: none;" />
+        
+        <button id="check">ตรวจสอบฟัน</button>
+        <p id="result"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
