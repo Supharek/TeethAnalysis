@@ -1,5 +1,6 @@
-const modelPath = 'teeth_modelnew.tflite';
+const modelPath = 'teeth_modelnew.tflite';  // Path to the model file
 
+// Load the model
 async function loadModel() {
     console.log("Loading model...");
     const model = await tf.loadGraphModel(modelPath, { fromTFHub: false });
@@ -7,14 +8,16 @@ async function loadModel() {
     return model;
 }
 
+// Preprocess the image to match the input format for the model
 function preprocessImage(image, targetSize = [224, 224]) {
     const tensor = tf.browser.fromPixels(image)
-        .resizeNearestNeighbor(targetSize)
+        .resizeNearestNeighbor(targetSize)  // Resize image to the required dimensions
         .toFloat()
-        .expandDims(0);
+        .expandDims(0);  // Add a batch dimension
     return tensor;
 }
 
+// Handle image file upload and analysis
 async function analyzeImage() {
     const fileInput = document.getElementById('imageInput');
     const resultDiv = document.getElementById('result');
@@ -35,19 +38,27 @@ async function analyzeImage() {
     };
 
     image.onload = async () => {
+        // Set canvas size and draw the uploaded image
         canvas.width = image.width;
         canvas.height = image.height;
         ctx.drawImage(image, 0, 0);
 
+        // Load the model
         const model = await loadModel();
+        
+        // Preprocess image and make prediction
         const inputTensor = preprocessImage(image);
         const prediction = model.predict(inputTensor);
-        const output = prediction.dataSync();
 
-        resultDiv.innerText = `Prediction: ${output}`;
+        // Get the output prediction result
+        const output = prediction.dataSync();
+        
+        // Display the result on the webpage
+        resultDiv.innerText = `Prediction Result: ${output}`;
     };
 
     reader.readAsDataURL(file);
 }
 
+// Event listener for the "Analyze" button
 document.getElementById('analyzeButton').addEventListener('click', analyzeImage);
