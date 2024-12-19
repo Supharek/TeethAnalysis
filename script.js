@@ -1,32 +1,31 @@
 const modelPath = 'teeth_modelnew.tflite';  // Path to the model file
 
-// แสดงข้อความการโหลดโมเดล
+// Load the model
 async function loadModel() {
     console.log("Loading model...");
     try {
-        // สมมุติว่าโมเดลนี้ใช้ TensorFlow.js
+        // Assuming TensorFlow.js can load .tflite models
         const model = await tf.loadGraphModel(modelPath, { fromTFHub: false });
         console.log("Model loaded successfully");
-
-        alert("Model loaded successfully!");  // แสดงป๊อปอัพเมื่อโหลดสำเร็จ
+        alert("Model loaded successfully!");  // Show a pop-up when model is loaded successfully
         return model;
     } catch (error) {
         console.error("Error loading the model: ", error);
-        alert("Error loading model! Please check your model path and try again.");  // แสดงป๊อปอัพเมื่อเกิดข้อผิดพลาด
+        alert("Error loading model! Please check your model path and try again.");  // Show error pop-up
         return null;
     }
 }
 
-// ฟังก์ชันในการประมวลผลภาพ
+// Preprocess the image to match the input format for the model
 function preprocessImage(image, targetSize = [224, 224]) {
     const tensor = tf.browser.fromPixels(image)
-        .resizeNearestNeighbor(targetSize)  // ขยายภาพให้ตรงตามขนาดที่ต้องการ
+        .resizeNearestNeighbor(targetSize)  // Resize image to the required dimensions
         .toFloat()
-        .expandDims(0);  // เพิ่มมิติของ batch
+        .expandDims(0);  // Add a batch dimension
     return tensor;
 }
 
-// ฟังก์ชันในการวิเคราะห์ภาพ
+// Handle image file upload and analysis
 async function analyzeImage() {
     const fileInput = document.getElementById('imageInput');
     const resultDiv = document.getElementById('result');
@@ -47,32 +46,46 @@ async function analyzeImage() {
     };
 
     image.onload = async () => {
-        // ตั้งขนาดของ canvas และวาดภาพที่อัปโหลด
+        // Set canvas size and draw the uploaded image
         canvas.width = image.width;
         canvas.height = image.height;
         ctx.drawImage(image, 0, 0);
 
-        // โหลดโมเดล
+        // Load the model
         const model = await loadModel();
 
-        // ตรวจสอบว่าโมเดลโหลดสำเร็จหรือไม่
+        // Check if model loaded
         if (!model) {
             resultDiv.innerText = "Model failed to load!";
             return;
         }
 
-        // ประมวลผลภาพและทำการทำนายผล
+        // Preprocess image and make prediction
         const inputTensor = preprocessImage(image);
         const prediction = await model.predict(inputTensor);
         console.log("Prediction result:", prediction);
 
-        // แสดงผลการทำนาย
-        const output = prediction.dataSync();  // รับผลจาก TensorFlow.js
+        // Get the output prediction result
+        const output = prediction.dataSync();  // For TensorFlow.js
         resultDiv.innerText = `Prediction Result: ${output}`;
     };
 
     reader.readAsDataURL(file);
 }
+    async function loadModel() {
+        console.log("Starting model load...");
+        try {
+            console.log("Fetching model...");
+            const model = await tf.loadGraphModel(modelPath);
+            console.log("Model fetched.");
+            alert("Model loaded successfully!");
+            return model;
+        } catch (error) {
+            console.error("Error during model load:", error);
+            alert("Model loading failed. Check console for errors.");
+            return null;
+        }
+    }
 
-// ฟังก์ชันในการเพิ่ม event listener
+// Event listener for the "Analyze" button
 document.getElementById('analyzeButton').addEventListener('click', analyzeImage);
