@@ -1,61 +1,59 @@
 let model;
 
-// ฟังก์ชันโหลดโมเดล
 async function loadModel() {
-    const modelPath = '/teeth_modelnew.tflite';
-    const modelStatus = document.getElementById('model-status');
-
-    try {
-        // แสดงข้อความขณะโหลด
-        modelStatus.innerHTML = '<p>Loading model...</p>';
-
-        // โหลดโมเดล
-        model = await tf.loadGraphModel(modelPath);
-
-        // ถ้าโหลดสำเร็จ
-        modelStatus.innerHTML = '<p>Model loaded successfully!</p>';
-        alert('Model loaded successfully!');  // แสดงป๊อปอัพเมื่อโมเดลโหลดสำเร็จ
-    } catch (error) {
-        // ถ้าเกิดข้อผิดพลาดในการโหลด
-        modelStatus.innerHTML = '<p>Error loading model! Please check your model path and try again.</p>';
-        console.error('Error loading model:', error);
-    }
+  const modelPath = './teeth_modelnew.tflite'; // Path ของโมเดล
+  try {
+    model = await tflite.loadModel(modelPath); // โหลดโมเดล
+    console.log('Model loaded successfully!');
+  } catch (error) {
+    console.error('Error loading model:', error);
+    alert('Error loading model! Please check your model path and try again.');
+  }
 }
 
-// ฟังก์ชันสำหรับการประมวลผลภาพ
-async function analyzeImage(image) {
-    if (!model) {
-        alert('Model is not loaded yet!');
-        return;
-    }
-
-    // แปลงภาพที่อัพโหลดเป็น Tensor
-    const tensorImage = tf.browser.fromPixels(image);
-
-    // ประมวลผลภาพ
-    const prediction = await model.predict(tensorImage.expandDims(0));
-    
-    // แสดงผลการทำนาย
-    const predictionResult = document.getElementById('prediction-result');
-    predictionResult.innerHTML = `Prediction result: ${prediction}`;
-}
-
-// เมื่อโหลดหน้าเว็บ, เริ่มต้นโหลดโมเดล
+// โหลดโมเดลเมื่อหน้าเว็บโหลดเสร็จ
 window.onload = () => {
-    loadModel();
-
-    // กำหนดให้สามารถอัพโหลดไฟล์ภาพ
-    const imageUpload = document.getElementById('imageUpload');
-    imageUpload.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => analyzeImage(img);
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+  loadModel();
 };
+
+// ฟังก์ชันที่ใช้ในการแสดงผลการพยากรณ์
+async function predictImage() {
+  const fileInput = document.getElementById('image-input');
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("No file chosen");
+    document.getElementById('prediction-result').textContent = 'No file chosen';
+    return;
+  }
+
+  document.getElementById('prediction-result').textContent = 'Processing...';
+
+  try {
+    const image = await loadImage(file); // โหลดภาพ
+    const result = await model.predict(image); // พยากรณ์
+    document.getElementById('prediction-result').textContent = result;
+  } catch (error) {
+    console.error('Prediction error:', error);
+    document.getElementById('prediction-result').textContent = 'Error during prediction';
+  }
+}
+
+// ฟังก์ชันสำหรับโหลดภาพจากไฟล์ที่เลือก
+function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+      img.src = event.target.result;
+    };
+    
+    reader.onerror = (error) => reject(error);
+    reader.readAsDataURL(file);
+    
+    img.onload = () => resolve(img);
+  });
+}
+
+document.getElementById('image-input').addEventListener('change', predictImage);
