@@ -1,44 +1,53 @@
-const uploadInput = document.getElementById('upload');
-const previewImage = document.getElementById('preview');
-const resultText = document.getElementById('result');
-const checkButton = document.getElementById('check');
+const modelPath = 'teeth_modelnew.tflite';
 
-let model;
+async function loadModel() {
+    console.log("Loading model...");
+    const model = await tf.loadGraphModel(modelPath, { fromTFHub: false });
+    console.log("Model loaded successfully");
+    return model;
+}
 
-// โหลดโมเดล .tflite
-(async () => {
-    model = await tflite.loadTFLiteModel('model.tflite');
-    console.log('โมเดลโหลดสำเร็จ!');
-})();
+function preprocessImage(image, targetSize = [224, 224]) {
+    const tensor = tf.browser.fromPixels(image)
+        .resizeNearestNeighbor(targetSize)
+        .toFloat()
+        .expandDims(0);
+    return tensor;
+}
 
-// แสดงรูปที่อัพโหลดหรือถ่าย
-uploadInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            previewImage.src = e.target.result;
-            previewImage.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    }
-});
+async function analyzeImage() {
+    const fileInput = document.getElementById('imageInput');
+    const resultDiv = document.getElementById('result');
 
-// ตรวจสอบฟันด้วยโมเดล
-checkButton.addEventListener('click', async () => {
-    if (!previewImage.src) {
-        alert('กรุณาอัพโหลดหรือถ่ายรูปก่อน!');
+    if (!fileInput.files.length) {
+        resultDiv.innerText = "Please upload an image!";
         return;
     }
 
-    const img = new Image();
-    img.src = previewImage.src;
-    img.onload = async () => {
-        const tensor = tf.browser.fromPixels(img).resizeNearestNeighbor([224, 224]).expandDims(0).toFloat();
-        const prediction = model.predict(tensor);
+    const file = fileInput.files[0];
+    const image = new Image();
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const reader = new FileReader();
 
-        // แปลงผลลัพธ์โมเดล
-        const isClean = prediction.dataSync()[0] > 0.5 ? 'ฟันสะอาด' : 'ฟันไม่สะอาด';
-        resultText.textContent = `ผลการวิเคราะห์ฟัน: ${isClean}`;
+    reader.onload = () => {
+        image.src = reader.result;
     };
-});
+
+    image.onload = async () => {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        ctx.drawImage(image, 0, 0);
+
+        const model = await loadModel();
+        const inputTensor = preprocessImage(image);
+        const prediction = model.predict(inputTensor);
+        const output = prediction.dataSync();
+
+        resultDiv.innerText = `Prediction: ${output}`;
+    };
+
+    reader.readAsDataURL(file);
+}
+
+document.getElementById('analyzeButton').addEventListener('click', analyzeImage);
