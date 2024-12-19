@@ -8,14 +8,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>Teeth Model Image Analysis</h1>
-        <input type="file" id="imageInput" accept="image/*">
-        <button id="analyzeButton">Analyze</button>
-        <canvas id="canvas" style="display: none;"></canvas>
-        <div id="result"></div>
+        <h1>Teeth Model Analysis</h1>
+        <div id="model-status">
+            <p>Loading model...</p>
+        </div>
+        <input type="file" id="imageUpload" accept="image/*">
+        <div id="prediction-result"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite"></script>
     <script src="script.js"></script>
 </body>
 </html>
