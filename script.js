@@ -4,7 +4,7 @@ let model;
 async function loadModel() {
   const modelPath = './teeth_modelnew.tflite'; // Path ของโมเดล
   try {
-    model = await tf.tflite.loadModel(modelPath); // ใช้ TensorFlow Lite ในการโหลดโมเดล
+    model = await tf.loadGraphModel(modelPath); // ใช้ TensorFlow.js ในการโหลดโมเดล
     console.log('Model loaded successfully!');
   } catch (error) {
     console.error('Error loading model:', error);
