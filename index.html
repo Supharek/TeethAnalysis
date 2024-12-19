@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teeth Model Analysis</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teeth Model Analysis</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Teeth Model Analysis</h1>
-        <div id="model-status">
-            <p>Loading model...</p>
-        </div>
-        <input type="file" id="imageUpload" accept="image/*">
-        <div id="prediction-result"></div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite"></script>
-    <script src="script.js"></script>
+  <h1>Teeth Model Analysis</h1>
+  
+  <!-- Form to upload image -->
+  <input type="file" id="image-input" accept="image/*">
+  
+  <!-- Result -->
+  <div id="prediction-result">No file chosen</div>
+  
+  <script src="script.js"></script>
 </body>
 </html>
