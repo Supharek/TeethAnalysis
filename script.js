@@ -12,11 +12,6 @@ async function loadModel() {
   }
 }
 
-// โหลดโมเดลเมื่อหน้าเว็บโหลดเสร็จ
-window.onload = () => {
-  loadModel();
-};
-
 // ฟังก์ชันสำหรับพยากรณ์ภาพ
 async function predictImage() {
   const fileInput = document.getElementById('image-input');
@@ -57,5 +52,13 @@ function loadImage(file) {
   });
 }
 
-// เมื่อกดปุ่ม "วิเคราะห์"
-document.getElementById('analyze-btn').addEventListener('click', predictImage);
+// เมื่อหน้าเว็บโหลดเสร็จแล้ว
+window.onload = () => {
+  loadModel(); // โหลดโมเดล
+
+  // เพิ่ม event listener หลังจากที่ DOM โหลดเสร็จ
+  const analyzeButton = document.getElementById('analyze-btn');
+  if (analyzeButton) {
+    analyzeButton.addEventListener('click', predictImage);
+  }
+};
