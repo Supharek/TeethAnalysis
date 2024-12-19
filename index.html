@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teeth Analysis</title>
+    <title>Teeth Model Analysis</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Teeth Image Analysis</h1>
+        <h1>Teeth Model Image Analysis</h1>
         <input type="file" id="imageInput" accept="image/*">
         <button id="analyzeButton">Analyze</button>
+        <canvas id="canvas" style="display: none;"></canvas>
         <div id="result"></div>
-        <canvas id="canvas" style="display:none;"></canvas>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="script.js"></script>
 </body>
 </html>

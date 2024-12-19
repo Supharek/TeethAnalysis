@@ -3,9 +3,15 @@ const modelPath = 'teeth_modelnew.tflite';  // Path to the model file
 // Load the model
 async function loadModel() {
     console.log("Loading model...");
-    const model = await tf.loadGraphModel(modelPath, { fromTFHub: false });
-    console.log("Model loaded successfully");
-    return model;
+    try {
+        // Assuming TensorFlow.js can load .tflite models
+        const model = await tf.loadGraphModel(modelPath, { fromTFHub: false });
+        console.log("Model loaded successfully");
+        return model;
+    } catch (error) {
+        console.error("Error loading the model: ", error);
+        return null;
+    }
 }
 
 // Preprocess the image to match the input format for the model
@@ -45,15 +51,20 @@ async function analyzeImage() {
 
         // Load the model
         const model = await loadModel();
-        
+
+        // Check if model loaded
+        if (!model) {
+            resultDiv.innerText = "Model failed to load!";
+            return;
+        }
+
         // Preprocess image and make prediction
         const inputTensor = preprocessImage(image);
-        const prediction = model.predict(inputTensor);
+        const prediction = await model.predict(inputTensor);
+        console.log("Prediction result:", prediction);
 
         // Get the output prediction result
-        const output = prediction.dataSync();
-        
-        // Display the result on the webpage
+        const output = prediction.dataSync();  // For TensorFlow.js
         resultDiv.innerText = `Prediction Result: ${output}`;
     };
 
