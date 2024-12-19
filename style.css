@@ -1,38 +1,60 @@
+/* ตั้งค่าพื้นฐานของ body */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    padding: 50px;
-    text-align: center;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  color: #333;
+  text-align: center;
 }
 
-.container {
-    background-color: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 300px;
-    margin: 0 auto;
-}
-
+/* สไตล์ของ header */
 h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
+  color: #2d3e50;
+  margin-top: 30px;
+  font-size: 2.5em;
 }
 
-#model-status {
-    margin-bottom: 20px;
-    font-size: 18px;
-    color: #333;
-}
-
-#prediction-result {
-    font-size: 16px;
-    color: #444;
-    margin-top: 20px;
-}
-
+/* สไตล์ของปุ่มเลือกไฟล์ */
 input[type="file"] {
-    padding: 10px;
-    font-size: 16px;
-    margin-top: 20px;
+  display: block;
+  margin: 20px auto;
+  padding: 10px;
+  background-color: #e1e1e1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 80%;
+  max-width: 400px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+/* สไตล์ของปุ่มวิเคราะห์ */
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 15px 32px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.2em;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+/* สไตล์ของข้อความผลลัพธ์ */
+#prediction-result {
+  margin-top: 20px;
+  font-size: 1.2em;
+  color: #333;
+  font-weight: bold;
+}
+
+/* สไตล์ของการเตือน (alert) */
+.alert {
+  color: red;
+  font-weight: bold;
 }
